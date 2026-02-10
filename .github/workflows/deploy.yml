@@ -1,9 +1,8 @@
-name: Deploy + Auditoria de Qualidade
+name: CD - Auditoria + Deploy GitHub Pages
 
 on:
   push:
-    branches: ["main", "master"]
-  workflow_dispatch:
+    branches: ["main"]
 
 permissions:
   contents: read
@@ -12,14 +11,10 @@ permissions:
 
 concurrency:
   group: "pages"
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-
     runs-on: ubuntu-latest
 
     steps:
@@ -36,16 +31,16 @@ jobs:
 
       # ===== AUDITORIA =====
 
-      - name: Auditoria - verificar pasta src
+      - name: Verificar se a pasta src existe
         run: test -d src
 
-      - name: Auditoria - verificar CSS
+      - name: Verificar se o CSS existe
         run: test -f src/css/App.css
 
-      - name: Auditoria - verificar index.html
+      - name: Verificar se o index.html existe
         run: test -f index.html
 
-      - name: Auditoria - validar HTML
+      - name: Lint HTML com HTMLHint
         uses: Cyb3r-Jak3/htmlhint-action@v1
         with:
           target_pattern: 'index.html'
@@ -63,8 +58,7 @@ jobs:
         with:
           path: ./dist
 
-      - name: Deploy to GitHub Pages
-        id: deployment
+      - name: Deploy
         uses: actions/deploy-pages@v4
 
       - name: Relatório final
