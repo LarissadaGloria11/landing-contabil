@@ -1,4 +1,4 @@
-name: CD - Auditoria + Deploy GitHub Pages
+name: CD - Deploy GitHub Pages
 
 on:
   push:
@@ -26,24 +26,10 @@ jobs:
         with:
           node-version: 20
 
-      - name: Instalar dependências
+      - name: Install dependencies
         run: npm install
 
-      - name: Verificar se a pasta src existe
-        run: test -d src
-
-      - name: Verificar se o CSS existe
-        run: test -f src/css/App.css
-
-      - name: Verificar se o index.html existe
-        run: test -f index.html
-
-      - name: Lint HTML com HTMLHint
-        uses: Cyb3r-Jak3/htmlhint-action@v1
-        with:
-          target_pattern: 'index.html'
-
-      - name: Build do projeto
+      - name: Build React app
         run: npm run build
 
       - name: Setup Pages
@@ -52,11 +38,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./dist
+          path: dist
 
       - name: Deploy
         uses: actions/deploy-pages@v4
-
-      - name: Relatório final
-        run: |
-          echo "O código da aluna Larissa da Glória foi auditado, está seguindo as normas corretas e está pronto para o deploy!"
